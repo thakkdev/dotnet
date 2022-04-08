@@ -1,0 +1,99 @@
+//create folder for certs
+
+//view linux folders fromn explorer
+> \\wsl$
+
+> mkdir todocerts
+> cd todocerts
+
+
+//prefix
+
+//generate private key to become a local Certificate Authority 
+> openssl genrsa -des3 -out localCA.key 2048
+
+output 
+localCA.key - private key
+
+//generate root certificate
+
+> openssl req -x509 -new -nodes -key localCA.key -sha256 -days 365 -out localCA.pem
+
+Country Name:
+State or Province Name: 
+Locality Name:
+Organization Name:
+Organizational Unit Name:
+Common Name: todotest.com
+Email Address:
+
+output 
+localCA.pem - is root certificate
+
+
+//take the root certificate to the microsoft management console
+
+//This allows for any SSL certs generated using the root cert (localCA.pem) are trusted on the local machine
+
+
+//Open Microsoft Management Console
+
+// windows R
+// type mmc
+
+// file -> Add/Remove Snap-in -> Certificates -> Add
+
+// Select option "Computer account" -> Local Computer and Finish and click ok
+
+// Double Click on Certificates (Local Computer)
+
+//Creating Self Signed cert for DEV sites
+
+//create a private key for development site
+
+> openssl genrsa -out todoapi.test.key 2048
+
+
+//create a CSR - certificate signing request
+
+> openssl req -new -key todoapi.test.key -out todoapi.test.csr
+
+Country Name:
+State or Province Name: 
+Locality Name:
+Organization Name:
+Organizational Unit Name:
+Common Name: todotest.com
+Email Address:
+
+
+//create a cert extension file todoapi.test.ext
+//for Subject Alternate Names
+
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = todoapi.test
+
+//create cert using the CSR, CA private key, CA certificate ext
+
+> openssl x509 -req -in todoapi.test.csr -CA localCA.pem -CAkey localCA.key \
+-CAcreateserial -out todoapi.test.crt -days 365 -sha256 -extfile todoapi.test.ext
+
+Output - todoapi.test.crt (signed certificate)
+
+https://localhost:443/api/todoitems
+
+docker run --rm -it -p 8000:80 todoapi --name todoapi-app
+
+From powershell
+
+docker run --rm -it -p 8000:80 -p 8001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=8001 -e ASPNETCORE_ENVIRONMENT=Development -e ASPNETCORE_Kestrel__Certificates__Default__Path=C:\workspaces\dotnet\ToDoAPI\todocerts\todoapi.test.crt -e ASPNETCORE_Kestrel__Certificates__Default__KeyPath=C:\workspaces\dotnet\ToDoAPI\todocerts\todocerts\todoapi.test.crt -v C:\workspaces\dotnet\ToDoAPI\todocerts:\https todoapi:my-sample 
+
+
+docker run --rm -it -p 8000:80 -p 8001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=8001 -e ASPNETCORE_Kestrel__Certificates__Default__Password="testtodo" -e ASPNETCORE_Kestrel__Certificates__Default__Path=C:\workspaces\dotnet\ToDoAPI\todocerts\ToDoAPI.crt -v $env:USERPROFILE\.aspnet\https:/https todoapi:my-sample
+
+docker build -t todoapi:my-sample -f Dockerfile .
