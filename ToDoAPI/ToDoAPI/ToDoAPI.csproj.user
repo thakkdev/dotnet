@@ -9,5 +9,9 @@
     <WebStackScaffolding_DbContextTypeFullName>ToDoAPI.Models.ToDoContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <NameOfLastUsedPublishProfile>_myrepo_.azurecr.io</NameOfLastUsedPublishProfile>
+    <ActiveDebugProfile>Docker</ActiveDebugProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
