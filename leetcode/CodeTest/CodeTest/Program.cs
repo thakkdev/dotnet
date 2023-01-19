@@ -29,5 +29,6 @@ LeetTest lt = new LeetTest();
 //Console.WriteLine(lt.MaxProfit(new int[] { 7, 1, 5, 3, 6, 4 }));
 
 //Console.WriteLine(lt.ClimbStairs(3));
-Console.WriteLine(lt.IsHappy(2));
+//Console.WriteLine(lt.IsHappy(2));
+LinkedListNode<int> lln = new LinkedListNode<int>(5);
 

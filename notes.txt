@@ -103,6 +103,6 @@ docker build -t todoapi:v1 .
 
 
 testtodo
-openssl pkcs12 -export -name “todoapi.test” -out todoapi.txt -inkey todoapi.test.keyxs -in todoapi.test.crt
+openssl pkcs12 -export -name “todoapi.test” -out todoapi.pfx -inkey todoapi.test.keyxs -in todoapi.test.crt
 
-docker run -p 7000:80 -p 7001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=7001 -e ASPNETCORE_Kestrel__Certificates__Default__Password="testtodo" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/todoapi.pfx -v %USERPROFILE%\.aspnet\https:/https/ todoapi:v1
+docker run -p 8000:80 -p 8001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=8001 -e ASPNETCORE_Kestrel__Certificates__Default__Password="testtodo" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/todoapi.pfx -v %USERPROFILE%\.aspnet\https:/https/ todoapi:v1
